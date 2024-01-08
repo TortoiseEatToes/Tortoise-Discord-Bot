@@ -5,6 +5,6 @@
 /.vs/
 
 # Ignore my settings files that have sensitive data
-Settings/TortoiseBotRuntimeSettings
-Settings/TortoiseBotStartupSettings
-TortoiseDiscordBot.args
+Settings/TortoiseBotRuntimeSettings.json
+Settings/TortoiseBotStartupSettings.json
+TortoiseDiscordBot.args.json
