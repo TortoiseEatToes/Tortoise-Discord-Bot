@@ -1,0 +1,38 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TortoiseBotWPF"
+        xmlns:Linq="clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" x:Class="TortoiseBotWPF.MainWindow"
+        mc:Ignorable="d"
+        Background="{Binding Source={StaticResource DiscordBrush_BlackLight}}"
+        Title="TortoiseBot" Height="450" Width="800">
+
+    <StackPanel>
+        <Image Width="200" Source="Resources\botIcon.png"/>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Working Directory: " Foreground="White" />
+            <TextBox Background="Transparent"
+                BorderThickness="0"
+                Text="{Binding WorkingDirectory, Mode=TwoWay}"
+                Foreground="White"
+                TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Button x:Name="buttonTortoiseBotStart" Click="button_ClickTortoiseBotStart" Content="Start Tortoise Bot"/>
+        <StackPanel Visibility="{Binding TortoiseBotGUIVisible}">
+            <Button x:Name="buttonTortoiseBotStop" Click="button_ClickTortoiseBotStop" Content="Stop Tortoise Bot"/>
+
+            <Button x:Name="buttonSetLogChannelDebug" Click="button_ClickSetDefaultChannelDebug" Content="Set Debug Channel"/>
+            <Button x:Name="buttonSetLogChannelLog" Click="button_ClickSetDefaultChannelLog" Content="Set Log Channel"/>
+
+            <StackPanel>
+                <TextBlock Text="Console Log: " Foreground="White" />
+                <ScrollViewer>
+                    <ListView x:Name="listConsoleLog"/>
+                </ScrollViewer>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>

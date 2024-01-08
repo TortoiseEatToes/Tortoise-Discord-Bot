@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TortoiseBotWPF": {
+      "commandName": "Project",
+      "commandLineArgs": "WorkingDirectory=\"F:\\SSD Content\\Projects\\Visual Studio 2022\\TortoiseBotWPF\\JSON\""
+    }
+  }
+}

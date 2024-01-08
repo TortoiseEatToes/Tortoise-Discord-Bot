@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="DiscordColor_Blue">#7289da</Color>
+    <Color x:Key="DiscordColor_GreyLight">#424549</Color>
+    <Color x:Key="DiscordColor_Grey">#36393e</Color>
+    <Color x:Key="DiscordColor_BlackLight">#282b30</Color>
+    <Color x:Key="DiscordColor_Black">#1e2124</Color>
+
+    <SolidColorBrush x:Key="DiscordBrush_Blue" Color="{Binding Source={StaticResource DiscordColor_Blue}}"/>
+    <SolidColorBrush x:Key="DiscordBrush_GreyLight" Color="{Binding Source={StaticResource DiscordColor_GreyLight}}"/>
+    <SolidColorBrush x:Key="DiscordBrush_Grey" Color="{Binding Source={StaticResource DiscordColor_Grey}}"/>
+    <SolidColorBrush x:Key="DiscordBrush_BlackLight" Color="{Binding Source={StaticResource DiscordColor_BlackLight}}"/>
+    <SolidColorBrush x:Key="DiscordBrush_Black" Color="{Binding Source={StaticResource DiscordColor_Black}}"/>
+</ResourceDictionary>

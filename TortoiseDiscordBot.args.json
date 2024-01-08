@@ -1,0 +1,18 @@
+{
+  "FileVersion": 2,
+  "Id": "e5c7f25f-c323-456d-9f39-40ae3489fcc7",
+  "Items": [
+    {
+      "Id": "76937bdc-f136-4086-a9ec-8e0efbc49ae1",
+      "Command": "SettingsFileOverride=\"\""
+    },
+    {
+      "Id": "c4821ad7-3a31-4479-83c3-89b97f02ac45",
+      "Command": "TortoiseBotToken=\"\""
+    },
+    {
+      "Id": "76610bac-a07c-41af-8a3a-4800120a941e",
+      "Command": "TortoiseBotSecret=\"\""
+    }
+  ]
+}

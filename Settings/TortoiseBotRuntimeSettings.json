@@ -1,0 +1,25 @@
+{
+  "onMessageReceivedHandlers": [
+  ],
+  "onReactionAddedHandlers": [
+  ],
+  "onReactionRemovedHandlers": [
+  ],
+  "tortoiseBotSettings": {
+    "saveFilePath": "TortoiseBotRuntimeSettings.json",
+    "messageRecievedCharacter": "!",
+    "server_id_tortoise_jams": 0,
+    "logsChannel": 0,
+    "debugChannel": 0,
+    "defaultOutputChannel": 0,
+    "reactChannel": 0,
+    "reactMessage": 0,
+    "botOperator": 0,
+    "unityExecutableRoot": "",
+    "reactRoles": {
+    },
+    "unityProjects": {
+      "BlizzJam2022": ""
+    }
+  }
+}
