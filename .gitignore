@@ -7,4 +7,9 @@
 # Ignore my settings files that have sensitive data
 Settings/TortoiseBotRuntimeSettings.json
 Settings/TortoiseBotStartupSettings.json
+
+# Ignore the command line args plugin
 TortoiseDiscordBot.args.json
+
+# Do not put the launch settings since my command line args can also get in here
+Properties/launchSettings.json
