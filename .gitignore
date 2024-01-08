@@ -1,0 +1,5 @@
+# Ignore some default Visual Studio output folders
+/bin/
+/temp/
+/obj/
+/.vs/
