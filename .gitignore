@@ -3,3 +3,8 @@
 /temp/
 /obj/
 /.vs/
+
+# Ignore my settings files that have sensitive data
+Settings/TortoiseBotRuntimeSettings
+Settings/TortoiseBotStartupSettings
+TortoiseDiscordBot.args
