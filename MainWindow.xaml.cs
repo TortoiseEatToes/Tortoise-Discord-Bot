@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
 using TortoiseBotWPF.CommandLine;
+using CommandLine;
+using TortoiseDiscordBot.code.CommandLineOptions;
 
 namespace TortoiseBotWPF
 {
@@ -37,8 +39,11 @@ namespace TortoiseBotWPF
         public MainWindow()
         {
             DataContext = this;
-
             Closed += OnMainWindowClose;
+
+            CommandLineOptionsManager.Initialize();
+
+            CommandLineOptions options = CommandLineOptionsManager.GetOptions();
 
             //All CommandLineVar objects need to exist before you call this.  I cannot make a truly static creation in C# like I can in C++
             //This was a fun experiment, that I don't think works in C# ;-;
