@@ -4,8 +4,6 @@ namespace TortoiseDiscordBot.code.CommandLineOptions
 {
     internal class CommandLineOptions
     {
-        [Option(Default = true)]
-        public bool Verbose { get; set; }
 
         [Option(Default = null)]
         public string? BotToken { get; set; }

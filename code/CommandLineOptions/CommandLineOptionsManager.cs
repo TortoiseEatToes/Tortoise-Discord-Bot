@@ -1,12 +1,6 @@
 ﻿using CommandLine;
-using Discord;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tortoise;
-using TortoiseBotWPF;
 
 namespace TortoiseDiscordBot.code.CommandLineOptions
 {
@@ -30,6 +24,10 @@ namespace TortoiseDiscordBot.code.CommandLineOptions
                     break;
                 case ParserResultType.NotParsed:
                     Logger.WriteLine("Failed to parse commandline args");
+                    foreach(Error error in parserResult.Errors)
+                    {
+                        Logger.WriteLine($"Parser error '{error.Tag}' with '{error.ToString()}'");
+                    }
                     break;
                 default:
                     Logger.WriteLine("Unknown ParserResult");

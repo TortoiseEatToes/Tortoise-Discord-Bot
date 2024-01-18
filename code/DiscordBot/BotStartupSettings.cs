@@ -22,7 +22,7 @@ namespace Tortoise
         public bool Initialize(string filePath)
         {
             CommandLineOptions options = CommandLineOptionsManager.GetOptions();
-            if (!String.IsNullOrEmpty(options.BotToken) && !String.IsNullOrEmpty(options.BotSecret))
+            if (options.BotToken != null && options.BotSecret != null)
             {
                 //Running using startup lines
                 json.token = options.BotToken;

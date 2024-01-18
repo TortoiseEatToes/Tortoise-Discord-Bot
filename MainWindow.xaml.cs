@@ -39,7 +39,7 @@ namespace TortoiseBotWPF
 
             CommandLineOptionsManager.Initialize();
             CommandLineOptions options = CommandLineOptionsManager.GetOptions();
-            if (!String.IsNullOrEmpty(options.WorkingDirectory))
+            if (options.WorkingDirectory != null)
             {
                 WorkingDirectory = options.WorkingDirectory;
             }
