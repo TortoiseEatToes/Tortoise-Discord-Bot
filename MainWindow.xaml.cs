@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
-using TortoiseBotWPF.CommandLine;
 using CommandLine;
 using TortoiseDiscordBot.code.CommandLineOptions;
 
@@ -17,9 +16,6 @@ namespace TortoiseBotWPF
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        //private static CommandLineVarString commandLineVarToken = new CommandLineVarString("TortoiseBotToken");
-        //private static CommandLineVarString commandLineVarSecret = new CommandLineVarString("TortoiseBotSecret");
-
         public event PropertyChangedEventHandler? PropertyChanged; //INotifyPropertyChanged
         private object _syncLock = new object();
 
@@ -42,16 +38,10 @@ namespace TortoiseBotWPF
             Closed += OnMainWindowClose;
 
             CommandLineOptionsManager.Initialize();
-
             CommandLineOptions options = CommandLineOptionsManager.GetOptions();
-
-            //All CommandLineVar objects need to exist before you call this.  I cannot make a truly static creation in C# like I can in C++
-            //This was a fun experiment, that I don't think works in C# ;-;
-            CommandLineVarString commandLineVarWorkingDirectory = new CommandLineVarString("SettingsFileOverride");
-            CommandLineVarManager.ParseCommandLineArgs();
-            if (commandLineVarWorkingDirectory.HasBeenSet())
+            if (!String.IsNullOrEmpty(options.WorkingDirectory))
             {
-                WorkingDirectory = commandLineVarWorkingDirectory.GetValue();
+                WorkingDirectory = options.WorkingDirectory;
             }
             else
             {
@@ -138,33 +128,25 @@ namespace TortoiseBotWPF
         {
             if(tortoiseBot is null)
             {
+                BotStartupSettings botStartupSettings = new BotStartupSettings();
+                string botStartupSettingsFile = $"{WorkingDirectory}\\TortoiseBotStartupSettings.json";
+                if (!botStartupSettings.Initialize(botStartupSettingsFile))
+                {
+                    Logger.WriteLine($"Failed to parse BotStartupSettings. Cannot start bot.");
+                    return;
+                }
+
                 BotRuntimeSettings botRuntimeSettings = new BotRuntimeSettings();
                 string botSettingsFile = $"{WorkingDirectory}\\TortoiseBotRuntimeSettings.json";
                 if (!botRuntimeSettings.ReadFromFile(botSettingsFile))
                 {
-                    Logger.WriteLine($"Failed to create BotRuntimeSettings because filepath does not exist: {botSettingsFile}");
+                    Logger.WriteLine($"Failed to parse BotRuntimeSettings. Cannot start bot.");
                     return;
                 }
+                
                 tortoiseBot = new TortoiseBot(botRuntimeSettings);
                 _onBtnSetDefaultChannelDebugClicked += tortoiseBot.SetDefaultChannelToDebugChannel;
                 _onBtnSetDefaultChannelLogClicked += tortoiseBot.SetDefaultChannelToLogChannel;
-                
-                BotStartupSettings botStartupSettings = new BotStartupSettings();
-                string botStartupSettingsFile = $"{WorkingDirectory}\\TortoiseBotStartupSettings.json";
-                if (!botStartupSettings.ReadFromFile(botStartupSettingsFile))
-                {
-                    Logger.WriteLine($"Failed to create BotStartupSettings because filepath does not exist: {botSettingsFile}");
-                    return;
-                }
-                //if(commandLineVarToken.HasBeenSet())
-                //{
-                //    botStartupSettings.json.token = commandLineVarToken.GetValue();
-                //}
-                //if (commandLineVarSecret.HasBeenSet())
-                //{
-                //    botStartupSettings.json.secret = commandLineVarSecret.GetValue();
-                //}
-
                 tortoiseBot.Run(botStartupSettings);
                 TortoiseBotGUIVisible = Visibility.Visible;
             }
@@ -176,7 +158,7 @@ namespace TortoiseBotWPF
 
         void StopTortoiseBot()
         {
-            if(tortoiseBot is not null)
+            if(tortoiseBot != null)
             {
                 TortoiseBotGUIVisible = Visibility.Hidden;
                 _onBtnSetDefaultChannelDebugClicked -= tortoiseBot.SetDefaultChannelToDebugChannel;

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TortoiseDiscordBot.code.CommandLineOptions;
 
 namespace Tortoise
 {
@@ -18,16 +19,34 @@ namespace Tortoise
     {
         public BotStartupSettingsJson json = new BotStartupSettingsJson();
 
+        public bool Initialize(string filePath)
+        {
+            CommandLineOptions options = CommandLineOptionsManager.GetOptions();
+            if (!String.IsNullOrEmpty(options.BotToken) && !String.IsNullOrEmpty(options.BotSecret))
+            {
+                //Running using startup lines
+                json.token = options.BotToken;
+                json.secret = options.BotSecret;
+                return true;
+            }
+            else
+            {
+                return ReadFromFile(filePath);
+            }
+        }
+
         public bool ReadFromFile(string filePath)
         {
             if (!File.Exists(filePath))
             {
+                Logger.WriteLine($"Failed to create BotStartupSettings because filepath does not exist '{filePath}'");
                 return false;
             }
             string contents = File.ReadAllText(filePath);
             BotStartupSettingsJson? botStartupSettingsJson = JsonConvert.DeserializeObject<BotStartupSettingsJson>(contents);
             if (botStartupSettingsJson is null)
             {
+                Logger.WriteLine($"Failed to parse BotStartupSettings from filepath '{filePath}'");
                 return false;
             }
             json = botStartupSettingsJson;

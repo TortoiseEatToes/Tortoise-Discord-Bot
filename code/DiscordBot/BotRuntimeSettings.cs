@@ -43,12 +43,14 @@ namespace Tortoise
         {
             if(!File.Exists(filePath))
             {
+                Logger.WriteLine($"Failed to create BotRuntimeSettings because filepath does not exist '{filePath}'");
                 return false;
             }
             string contents = File.ReadAllText(filePath);
             BotSettingsJson? botStartupSettingsJson = JsonConvert.DeserializeObject<BotSettingsJson>(contents);
             if (botStartupSettingsJson is null)
             {
+                Logger.WriteLine($"Failed to parse BotRuntimeSettings from filepath '{filePath}'");
                 return false;
             }
             json = botStartupSettingsJson;
