@@ -132,7 +132,7 @@ namespace TortoiseBotWPF
                 string botStartupSettingsFile = $"{WorkingDirectory}\\TortoiseBotStartupSettings.json";
                 if (!botStartupSettings.Initialize(botStartupSettingsFile))
                 {
-                    Logger.WriteLine($"Failed to parse BotStartupSettings. Cannot start bot.");
+                    Logger.WriteLine_Error($"Failed to parse BotStartupSettings. Cannot start bot.");
                     return;
                 }
 
@@ -140,7 +140,7 @@ namespace TortoiseBotWPF
                 string botSettingsFile = $"{WorkingDirectory}\\TortoiseBotRuntimeSettings.json";
                 if (!botRuntimeSettings.ReadFromFile(botSettingsFile))
                 {
-                    Logger.WriteLine($"Failed to parse BotRuntimeSettings. Cannot start bot.");
+                    Logger.WriteLine_Error($"Failed to parse BotRuntimeSettings. Cannot start bot.");
                     return;
                 }
                 
@@ -152,7 +152,7 @@ namespace TortoiseBotWPF
             }
             else
             {
-                Logger.WriteLine("Cannot start TortoiseBot when they are already started");
+                Logger.WriteLine_Error("Cannot start TortoiseBot when they are already started");
             }
         }
 
@@ -169,7 +169,7 @@ namespace TortoiseBotWPF
             }
             else
             {
-                Logger.WriteLine("Cannot stop TortoiseBot when they are already stopped");
+                Logger.WriteLine_Error("Cannot stop TortoiseBot when they are already stopped");
             }
         }
 

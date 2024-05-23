@@ -53,24 +53,20 @@ namespace Tortoise
 
         private string GetFormattedDateTime()
         {
-            return $"{GetCurrentDate()}|{GetCurrentTime()}";
+            return $"{GetCurrentDate()} | {GetCurrentTime()}";
         }
 
-        private void priv_LogWithDate(string logLine)
+        private void priv_LogWithDate(string prefix, string logLine)
         {
-            priv_LogOut($"{GetFormattedDateTime()} {logLine}");
+            priv_LogOut(prefix, $"{GetFormattedDateTime()} | {logLine}");
         }
 
-        private void priv_Log(string logLine)
+        private void priv_LogOut(string prefix, string logLine)
         {
-            priv_LogOut($"{GetCurrentDate()}|{logLine}");
-        }
-
-        private void priv_LogOut(string logLine)
-        {
+            string logLineOut = $"{prefix} | {logLine}";
             mutex.WaitOne();
-            File.AppendAllText(logFileFullPath, $"{logLine}{Environment.NewLine}");
-            _onLogLineAdded?.Invoke(logLine);
+            File.AppendAllText(logFileFullPath, $"{logLineOut}{Environment.NewLine}");
+            _onLogLineAdded?.Invoke(logLineOut);
             mutex.ReleaseMutex();
         }
 
@@ -79,14 +75,14 @@ namespace Tortoise
             logger = new Logger();
         }
 
-        public static void WriteLine(string logLine)
+        public static void WriteLine_Debug(string logLine)
         {
-            logger?.priv_LogWithDate(logLine);
+            logger?.priv_LogWithDate("D", logLine);
         }
 
-        public static void WriteLineForwardedLog(string logLine)
+        public static void WriteLine_Error(string logLine)
         {
-            logger?.priv_Log(logLine);
+            logger?.priv_LogWithDate("E", logLine);
         }
 
         public static void AddOnLogLineCallbackAdded(OnLogLineAddedCallbackDelegate onLogLineAdded)

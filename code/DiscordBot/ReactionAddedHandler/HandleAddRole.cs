@@ -12,7 +12,7 @@ namespace Tortoise
             bool bHandled = false;
             if (arg1.Id == tortoiseBot.GetSettings().reactMessage)
             {
-                Logger.WriteLine(arg3.User.Value.Username + " wants to add: " + arg3.Emote.Name);
+                Logger.WriteLine_Debug(arg3.User.Value.Username + " wants to add: " + arg3.Emote.Name);
                 IGuildUser? guildUser = arg3.User.Value as IGuildUser;
                 if(guildUser is null)
                 {
@@ -24,7 +24,7 @@ namespace Tortoise
                 }
                 if (guildUser.IsBot)
                 {
-                    Logger.WriteLine("Ignoring reaction added from " + arg3.User.Value.Username + " because they are a bot.");
+                    Logger.WriteLine_Debug("Ignoring reaction added from " + arg3.User.Value.Username + " because they are a bot.");
                     return false;
                 }
                 ulong roleID;
@@ -32,7 +32,7 @@ namespace Tortoise
                 {
                     if (!DiscordBotUtilities.UserHasRole(guildUser, roleID))
                     {
-                        Logger.WriteLine($"Giving role '{arg3.Emote.Name}' to user '{arg3.User.Value.Username}'");
+                        Logger.WriteLine_Debug($"Giving role '{arg3.Emote.Name}' to user '{arg3.User.Value.Username}'");
                         await guildUser.AddRoleAsync(roleID);
                         bHandled = true;
                     }

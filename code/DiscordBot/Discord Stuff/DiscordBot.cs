@@ -49,17 +49,17 @@ namespace Tortoise
 
         protected virtual async Task PresenceUpdated(SocketUser socketUser, SocketPresence socketPresence1, SocketPresence socketPresence2)
         {
-            Logger.WriteLine("PresenceUpdated");
+            Logger.WriteLine_Debug("PresenceUpdated");
         }
 
         protected virtual async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
-            Logger.WriteLine("OnReactionRemoved");
+            Logger.WriteLine_Debug("OnReactionRemoved");
         }
 
         protected virtual async Task OnReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
-            Logger.WriteLine("OnReactionAdded");
+            Logger.WriteLine_Debug("OnReactionAdded");
         }
 
         public async Task Run(string token)
@@ -78,50 +78,65 @@ namespace Tortoise
 
         protected virtual async Task OnClientIsReady()
         {
-            Logger.WriteLine("OnClientIsReady - Start");
+            Logger.WriteLine_Debug("OnClientIsReady - Start");
         }
 
         private async Task OnClientLog(LogMessage logMessage)
         {
-            Logger.WriteLineForwardedLog(logMessage.ToString());
+            switch (logMessage.Severity)
+            {
+                case LogSeverity.Critical:
+                case LogSeverity.Error:
+                case LogSeverity.Warning:
+                    Logger.WriteLine_Error(logMessage.Message);
+                    break;
+                case LogSeverity.Info:
+                case LogSeverity.Verbose:
+                case LogSeverity.Debug:
+                    Logger.WriteLine_Debug(logMessage.Message);
+                    break;
+                default:
+                    Logger.WriteLine_Error("UNRECOGNIZED SEVERITY " + logMessage.Message);
+                    break;
+            }
         }
 
         protected virtual async Task OnMessageReceived(SocketMessage socketMessage)
         {
-            Logger.WriteLine("OnMessageReceived: " + socketMessage.ToString());
+            Logger.WriteLine_Debug("OnMessageReceived: " + socketMessage.ToString());
         }
 
         protected virtual async Task OnSlashCommandCalled(SocketSlashCommand socketSlashCommand)
         {
-            Logger.WriteLine("OnSlashCommandCalled: " + socketSlashCommand.ToString());
+            Logger.WriteLine_Debug("OnSlashCommandCalled: " + socketSlashCommand.ToString());
         }
 
         protected virtual async Task OnUserJoined(SocketGuildUser socketGuildUser)
         {
-            Logger.WriteLine("OnUserJoined: " + socketGuildUser.ToString());
+            Logger.WriteLine_Debug("OnUserJoined: " + socketGuildUser.ToString());
         }
 
         protected virtual async Task OnUserLeft(SocketGuild socketGuild, SocketUser socketUser)
         {
-            Logger.WriteLine("OnUserLeft.socketGuild: " + socketGuild.ToString());
-            Logger.WriteLine("OnUserLeft.socketUser: " + socketUser.ToString());
+            Logger.WriteLine_Debug("OnUserLeft.socketGuild: " + socketGuild.ToString());
+            Logger.WriteLine_Debug("OnUserLeft.socketUser: " + socketUser.ToString());
         }
 
         protected virtual async Task OnUserVoiceStateUpdated(SocketUser socketUser, SocketVoiceState socketVoiceState1, SocketVoiceState socketVoiceState2)
         {
-            Logger.WriteLine("OnUserVoiceStateUpdated.socketUser: " + socketUser.ToString());
-            Logger.WriteLine("OnUserVoiceStateUpdated.socketVoiceState1: " + socketVoiceState1.ToString());
-            Logger.WriteLine("OnUserVoiceStateUpdated.socketVoiceState2: " + socketVoiceState2.ToString());
+            Logger.WriteLine_Debug("OnUserVoiceStateUpdated.socketUser: " + socketUser.ToString());
+            Logger.WriteLine_Debug("OnUserVoiceStateUpdated.socketVoiceState1: " + socketVoiceState1.ToString());
+            Logger.WriteLine_Debug("OnUserVoiceStateUpdated.socketVoiceState2: " + socketVoiceState2.ToString());
         }
 
         protected virtual async Task OnButtonClicked(SocketMessageComponent socketMessageComponent)
         {
-            Logger.WriteLine("OnButtonClicked: " + socketMessageComponent.ToString());
+            Logger.WriteLine_Debug("OnButtonClicked: " + socketMessageComponent.ToString());
         }
 
         protected virtual async Task OnJoinedGuild(SocketGuild socketGuild)
         {
-            Logger.WriteLine("OnJoinedGuild: " + socketGuild.ToString());
+            Logger.WriteLine_Debug("OnJoinedGuild: " + socketGuild.ToString());
         }
 
         public DiscordSocketClient GetSocketClient()

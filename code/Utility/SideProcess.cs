@@ -69,7 +69,7 @@ namespace Tortoise
         {
             if (!String.IsNullOrEmpty(dataReceivedEventArgs.Data))
             {
-                Logger.WriteLine($"OutputDataReceived: {dataReceivedEventArgs.Data.ToString()}");
+                Logger.WriteLine_Debug($"OutputDataReceived: {dataReceivedEventArgs.Data.ToString()}");
             }
         }
 
@@ -77,7 +77,7 @@ namespace Tortoise
         {
             if (!String.IsNullOrEmpty(dataReceivedEventArgs.Data))
             {
-                Logger.WriteLine($"ErrorDataReceived: {dataReceivedEventArgs.Data.ToString()}");
+                Logger.WriteLine_Error($"ErrorDataReceived: {dataReceivedEventArgs.Data.ToString()}");
             }
         }
     }

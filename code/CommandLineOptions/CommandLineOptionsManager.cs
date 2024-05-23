@@ -23,14 +23,14 @@ namespace TortoiseDiscordBot.code.CommandLineOptions
                     commandLineOptions = parserResult.Value;
                     break;
                 case ParserResultType.NotParsed:
-                    Logger.WriteLine("Failed to parse commandline args");
+                    Logger.WriteLine_Error("Failed to parse commandline args");
                     foreach(Error error in parserResult.Errors)
                     {
-                        Logger.WriteLine($"Parser error '{error.Tag}' with '{error.ToString()}'");
+                        Logger.WriteLine_Error($"Parser error '{error.Tag}' with '{error.ToString()}'");
                     }
                     break;
                 default:
-                    Logger.WriteLine("Unknown ParserResult");
+                    Logger.WriteLine_Error("Unknown ParserResult");
                     break;
             }
         }

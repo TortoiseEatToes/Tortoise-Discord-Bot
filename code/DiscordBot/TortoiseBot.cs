@@ -111,17 +111,17 @@ namespace Tortoise
                     }
                     else
                     {
-                        Logger.WriteLine($"Failed to cast {qualifiedName} to {typeof(TypeName).FullName}");
+                        Logger.WriteLine_Error($"Failed to cast {qualifiedName} to {typeof(TypeName).FullName}");
                     }
                 }
                 else
                 {
-                    Logger.WriteLine($"Failed to create instance of type {type}");
+                    Logger.WriteLine_Error($"Failed to create instance of type {type}");
                 }
             }
             else
             {
-                Logger.WriteLine($"Failed to find type for {qualifiedName}");
+                Logger.WriteLine_Error($"Failed to find type for {qualifiedName}");
             }
             return createdType;
         }
@@ -151,7 +151,7 @@ namespace Tortoise
         #region EventHandlers
         protected override async Task OnMessageReceived(SocketMessage socketMessage)
         {
-            Logger.WriteLine("OnMessageReceived: " + socketMessage.ToString());
+            Logger.WriteLine_Debug("OnMessageReceived: " + socketMessage.ToString());
 
             SocketUserMessage? userMessage = socketMessage as SocketUserMessage;
             if(userMessage is null)
@@ -180,7 +180,7 @@ namespace Tortoise
 
         protected override async Task OnReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
-            Logger.WriteLine("OnReactionAdded");
+            Logger.WriteLine_Debug("OnReactionAdded");
             foreach (OnReactionAddedHandler onReactionAddedHandler in onReactionAddedHandlers)
             {
                 if (await onReactionAddedHandler.Handle(this, arg1, arg2, arg3))
@@ -192,7 +192,7 @@ namespace Tortoise
 
         protected override async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
-            Logger.WriteLine("OnReactionRemoved");
+            Logger.WriteLine_Debug("OnReactionRemoved");
             foreach (OnReactionRemovedHandler onReactionRemovedHandler in onReactionRemovedHandlers)
             {
                 if (await onReactionRemovedHandler.Handle(this, arg1, arg2, arg3))
@@ -211,7 +211,7 @@ namespace Tortoise
             }
             else
             {
-                Logger.WriteLine($"PostMessageToDefaultChannel - Failed to find botLogsChannel at {settings.defaultOutputChannel} to post message to: {outputMessage}");
+                Logger.WriteLine_Error($"PostMessageToDefaultChannel - Failed to find botLogsChannel at {settings.defaultOutputChannel} to post message to: {outputMessage}");
             }
         }
         #endregion
@@ -219,7 +219,7 @@ namespace Tortoise
         #region Initialization
         protected override async Task OnClientIsReady()
         {
-            Logger.WriteLine("OnClientIsReady - Start");
+            Logger.WriteLine_Debug("OnClientIsReady - Start");
             SocketGuild socketGuild = m_DiscordSocketClient.GetGuild(settings.server_id_tortoise_jams);
             if (socketGuild != null)
             {
@@ -233,7 +233,7 @@ namespace Tortoise
                     }
                 }
             }
-            Logger.WriteLine("OnClientIsReady - End");
+            Logger.WriteLine_Debug("OnClientIsReady - End");
         }
 
         private async Task InitializeRoles(IMessage messageRoles, SocketGuild socketGuild)
@@ -257,20 +257,20 @@ namespace Tortoise
                                 }
                                 else if (guildUser.IsBot)
                                 {
-                                    Logger.WriteLine($"Skipping user '{user.Username}' for role initialization because they are a bot");
+                                    Logger.WriteLine_Debug($"Skipping user '{user.Username}' for role initialization because they are a bot");
                                 }
                                 else
                                 {
                                     if (!DiscordBotUtilities.UserHasRole(guildUser, roleID))
                                     {
-                                        Logger.WriteLine($"Giving role '{reactionData.Key.Name}' to user '{user.Username}'");
+                                        Logger.WriteLine_Debug($"Giving role '{reactionData.Key.Name}' to user '{user.Username}'");
                                         await guildUser.AddRoleAsync(roleID);
                                     }
                                 }
                             }
                             else
                             {
-                                Logger.WriteLine($"Skipping user '{user.Username}' for role initialization because they are missing");
+                                Logger.WriteLine_Error($"Cannot give '{reactionData.Key.Name}' to '{user.Username}' because they are missing");
                             }
                         }
                     }

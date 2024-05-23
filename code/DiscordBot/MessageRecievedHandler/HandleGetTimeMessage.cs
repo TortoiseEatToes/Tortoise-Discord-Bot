@@ -31,7 +31,7 @@ namespace Tortoise
                     }
                     catch(Exception exception)
                     {
-                        Logger.WriteLine($"Failed to find time zone '{timeZoneId}' due to exception: {exception}");
+                        Logger.WriteLine_Error($"Failed to find time zone '{timeZoneId}' due to exception: {exception}");
                         tortoiseBot.PostMessageToDefaultChannel($"Failed to find time zone: {timeZoneId}");
                     }
                 }
