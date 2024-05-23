@@ -5,16 +5,16 @@ namespace TortoiseDiscordBot.code.CommandLineOptions
     internal class CommandLineOptions
     {
 
-        [Option(Default = null)]
+        [Option("BotToken", Default = null, Required = false)]
         public string? BotToken { get; set; }
 
-        [Option(Default = null)]
+        [Option("BotSecret", Default = null, Required = false)]
         public string? BotSecret { get; set; }
 
-        [Option(Default = null)]
+        [Option("SettingsFileOverride", Default = null, Required = false)]
         public string? SettingsFileOverride { get; set; }
 
-        [Option(Default = null)]
+        [Option("WorkingDirectory", Default = null, Required = false)]
         public string? WorkingDirectory { get; set; }
     }
 }
