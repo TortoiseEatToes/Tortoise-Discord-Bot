@@ -58,18 +58,18 @@ namespace Tortoise
 
         private void priv_LogWithDate(string logLine)
         {
-            string logLineFinalized = $"{GetFormattedDateTime} {logLine}{Environment.NewLine}";
-            mutex.WaitOne();
-            File.AppendAllText(logFileFullPath, logLineFinalized);
-            _onLogLineAdded?.Invoke(logLine);
-            mutex.ReleaseMutex();
+            priv_LogOut($"{GetFormattedDateTime()} {logLine}");
         }
 
         private void priv_Log(string logLine)
         {
-            string logLineFinalized = $"{GetCurrentDate()}|{logLine}{Environment.NewLine}";
+            priv_LogOut($"{GetCurrentDate()}|{logLine}");
+        }
+
+        private void priv_LogOut(string logLine)
+        {
             mutex.WaitOne();
-            File.AppendAllText(logFileFullPath, logLineFinalized);
+            File.AppendAllText(logFileFullPath, $"{logLine}{Environment.NewLine}");
             _onLogLineAdded?.Invoke(logLine);
             mutex.ReleaseMutex();
         }
