@@ -263,14 +263,14 @@ namespace Tortoise
                                 {
                                     if (!DiscordBotUtilities.UserHasRole(guildUser, roleID))
                                     {
-                                        Logger.WriteLine_Debug($"Giving role '{reactionData.Key.Name}' to user '{user.Username}'");
+                                        Logger.WriteLine_Info($"Giving role '{reactionData.Key.Name}' to user '{user.Username}'");
                                         await guildUser.AddRoleAsync(roleID);
                                     }
                                 }
                             }
                             else
                             {
-                                Logger.WriteLine_Error($"Cannot give '{reactionData.Key.Name}' to '{user.Username}' because they are missing");
+                                Logger.WriteLine_Warning($"Cannot give '{reactionData.Key.Name}' to '{user.Username}' because they are missing");
                             }
                         }
                     }

@@ -75,14 +75,34 @@ namespace Tortoise
             logger = new Logger();
         }
 
-        public static void WriteLine_Debug(string logLine)
+        public static void WriteLine_Critical(string logLine)
         {
-            logger?.priv_LogWithDate("D", logLine);
+            logger?.priv_LogWithDate("C", logLine);
         }
 
         public static void WriteLine_Error(string logLine)
         {
             logger?.priv_LogWithDate("E", logLine);
+        }
+
+        public static void WriteLine_Warning(string logLine)
+        {
+            logger?.priv_LogWithDate("W", logLine);
+        }
+
+        public static void WriteLine_Info(string logLine)
+        {
+            logger?.priv_LogWithDate("I", logLine);
+        }
+
+        public static void WriteLine_Verbose(string logLine)
+        {
+            logger?.priv_LogWithDate("V", logLine);
+        }
+
+        public static void WriteLine_Debug(string logLine)
+        {
+            logger?.priv_LogWithDate("D", logLine);
         }
 
         public static void AddOnLogLineCallbackAdded(OnLogLineAddedCallbackDelegate onLogLineAdded)

@@ -86,17 +86,25 @@ namespace Tortoise
             switch (logMessage.Severity)
             {
                 case LogSeverity.Critical:
+                    Logger.WriteLine_Critical(logMessage.Message);
+                    break;
                 case LogSeverity.Error:
-                case LogSeverity.Warning:
                     Logger.WriteLine_Error(logMessage.Message);
                     break;
+                case LogSeverity.Warning:
+                    Logger.WriteLine_Warning(logMessage.Message);
+                    break;
                 case LogSeverity.Info:
+                    Logger.WriteLine_Info(logMessage.Message);
+                    break;
                 case LogSeverity.Verbose:
+                    Logger.WriteLine_Verbose(logMessage.Message);
+                    break;
                 case LogSeverity.Debug:
                     Logger.WriteLine_Debug(logMessage.Message);
                     break;
                 default:
-                    Logger.WriteLine_Error("UNRECOGNIZED SEVERITY " + logMessage.Message);
+                    Logger.WriteLine_Critical("UNRECOGNIZED SEVERITY " + logMessage.Message);
                     break;
             }
         }
