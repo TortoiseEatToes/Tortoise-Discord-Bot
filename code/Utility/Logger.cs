@@ -41,19 +41,20 @@ namespace Tortoise
             }
         }
 
-        private string GetCurrentTime()
+        private string FormatTime_Seconds(DateTime dateTime)
         {
-            return DateTime.Now.ToString("HH:mm:ss");
+            return dateTime.ToString("HH:mm:ss");
         }
 
-        private string GetCurrentDate()
+        private string FormatTime_Day(DateTime dateTime)
         {
-            return DateTime.Now.ToString("MM/dd/yyyy");
+            return dateTime.ToString("MM/dd/yyyy");
         }
 
         private string GetFormattedDateTime()
         {
-            return $"{GetCurrentDate()} | {GetCurrentTime()}";
+            DateTime dateTime = DateTime.Now;
+            return $"{FormatTime_Day(dateTime)} | {FormatTime_Seconds(dateTime)}";
         }
 
         private void priv_LogWithDate(string prefix, string logLine)
@@ -97,12 +98,16 @@ namespace Tortoise
 
         public static void WriteLine_Verbose(string logLine)
         {
+#if DEBUG
             logger?.priv_LogWithDate("V", logLine);
+#endif
         }
 
         public static void WriteLine_Debug(string logLine)
         {
+#if DEBUG
             logger?.priv_LogWithDate("D", logLine);
+#endif
         }
 
         public static void AddOnLogLineCallbackAdded(OnLogLineAddedCallbackDelegate onLogLineAdded)

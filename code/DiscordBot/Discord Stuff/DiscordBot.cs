@@ -104,7 +104,7 @@ namespace Tortoise
                     Logger.WriteLine_Debug(logMessage.Message);
                     break;
                 default:
-                    Logger.WriteLine_Critical("UNRECOGNIZED SEVERITY " + logMessage.Message);
+                    Logger.WriteLine_Debug("UNRECOGNIZED SEVERITY " + logMessage.Message);
                     break;
             }
         }
