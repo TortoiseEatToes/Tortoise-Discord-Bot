@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tortoise;
 
-namespace TortoiseDiscordBot.code.DiscordBot.Commands.Interfaces
+namespace Tortoise
 {
     internal interface IHandleTextCommand
     {

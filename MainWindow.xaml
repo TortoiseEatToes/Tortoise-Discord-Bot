@@ -26,13 +26,12 @@
 
             <Button x:Name="buttonSetLogChannelDebug" Click="button_ClickSetDefaultChannelDebug" Content="Set Debug Channel"/>
             <Button x:Name="buttonSetLogChannelLog" Click="button_ClickSetDefaultChannelLog" Content="Set Log Channel"/>
-
-            <StackPanel>
-                <TextBlock Text="Console Log: " Foreground="White" />
-                <ScrollViewer>
-                    <ListView x:Name="listConsoleLog"/>
-                </ScrollViewer>
-            </StackPanel>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="Console Log: " Foreground="White" />
+            <ScrollViewer>
+                <ListView x:Name="listConsoleLog"/>
+            </ScrollViewer>
         </StackPanel>
     </StackPanel>
 </Window>

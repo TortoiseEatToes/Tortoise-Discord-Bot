@@ -45,21 +45,8 @@ namespace Tortoise
             m_DiscordSocketClient.ReactionAdded += OnReactionAdded;
             m_DiscordSocketClient.ReactionRemoved += OnReactionRemoved;
             m_DiscordSocketClient.PresenceUpdated += PresenceUpdated;
-        }
-
-        protected virtual async Task PresenceUpdated(SocketUser socketUser, SocketPresence socketPresence1, SocketPresence socketPresence2)
-        {
-            Logger.WriteLine_Debug("PresenceUpdated");
-        }
-
-        protected virtual async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
-        {
-            Logger.WriteLine_Debug("OnReactionRemoved");
-        }
-
-        protected virtual async Task OnReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
-        {
-            Logger.WriteLine_Debug("OnReactionAdded");
+            m_DiscordSocketClient.InviteCreated += InviteCreated;
+            m_DiscordSocketClient.InviteDeleted += InviteDeleted;
         }
 
         public async Task Run(string token)
@@ -76,12 +63,25 @@ namespace Tortoise
             await m_CommandService.AddModulesAsync(assembly, serviceProvider);
         }
 
-        protected virtual async Task OnClientIsReady()
+        public DiscordSocketClient GetSocketClient()
         {
-            Logger.WriteLine_Debug("OnClientIsReady - Start");
+            return m_DiscordSocketClient;
         }
 
-        private async Task OnClientLog(LogMessage logMessage)
+        public bool GuildUserIsSelf(IGuildUser? guildUser)
+        {
+            return m_DiscordSocketClient.CurrentUser.Id == guildUser?.Id;
+        }
+
+        #region DiscordOverrides
+
+        protected virtual Task OnClientIsReady()
+        {
+            Logger.WriteLine_Debug("OnClientIsReady - Start");
+            return Task.CompletedTask;
+        }
+
+        private Task OnClientLog(LogMessage logMessage)
         {
             switch (logMessage.Severity)
             {
@@ -107,54 +107,84 @@ namespace Tortoise
                     Logger.WriteLine_Debug("UNRECOGNIZED SEVERITY " + logMessage.Message);
                     break;
             }
+            return Task.CompletedTask;
         }
 
-        protected virtual async Task OnMessageReceived(SocketMessage socketMessage)
+        protected virtual Task PresenceUpdated(SocketUser socketUser, SocketPresence socketPresence1, SocketPresence socketPresence2)
+        {
+            Logger.WriteLine_Debug("PresenceUpdated");
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task OnReactionRemoved(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
+        {
+            Logger.WriteLine_Debug("OnReactionRemoved");
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task OnReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
+        {
+            Logger.WriteLine_Debug("OnReactionAdded");
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task OnMessageReceived(SocketMessage socketMessage)
         {
             Logger.WriteLine_Debug("OnMessageReceived: " + socketMessage.ToString());
+            return Task.CompletedTask;
         }
 
-        protected virtual async Task OnSlashCommandCalled(SocketSlashCommand socketSlashCommand)
+        protected virtual Task OnSlashCommandCalled(SocketSlashCommand socketSlashCommand)
         {
             Logger.WriteLine_Debug("OnSlashCommandCalled: " + socketSlashCommand.ToString());
+            return Task.CompletedTask;
         }
 
-        protected virtual async Task OnUserJoined(SocketGuildUser socketGuildUser)
+        protected virtual Task OnUserJoined(SocketGuildUser socketGuildUser)
         {
             Logger.WriteLine_Debug("OnUserJoined: " + socketGuildUser.ToString());
+            return Task.CompletedTask;
         }
 
-        protected virtual async Task OnUserLeft(SocketGuild socketGuild, SocketUser socketUser)
+        protected virtual Task OnUserLeft(SocketGuild socketGuild, SocketUser socketUser)
         {
             Logger.WriteLine_Debug("OnUserLeft.socketGuild: " + socketGuild.ToString());
             Logger.WriteLine_Debug("OnUserLeft.socketUser: " + socketUser.ToString());
+            return Task.CompletedTask;
         }
 
-        protected virtual async Task OnUserVoiceStateUpdated(SocketUser socketUser, SocketVoiceState socketVoiceState1, SocketVoiceState socketVoiceState2)
+        protected virtual Task OnUserVoiceStateUpdated(SocketUser socketUser, SocketVoiceState socketVoiceState1, SocketVoiceState socketVoiceState2)
         {
             Logger.WriteLine_Debug("OnUserVoiceStateUpdated.socketUser: " + socketUser.ToString());
             Logger.WriteLine_Debug("OnUserVoiceStateUpdated.socketVoiceState1: " + socketVoiceState1.ToString());
             Logger.WriteLine_Debug("OnUserVoiceStateUpdated.socketVoiceState2: " + socketVoiceState2.ToString());
+            return Task.CompletedTask;
         }
 
-        protected virtual async Task OnButtonClicked(SocketMessageComponent socketMessageComponent)
+        protected virtual Task OnButtonClicked(SocketMessageComponent socketMessageComponent)
         {
             Logger.WriteLine_Debug("OnButtonClicked: " + socketMessageComponent.ToString());
+            return Task.CompletedTask;
         }
 
-        protected virtual async Task OnJoinedGuild(SocketGuild socketGuild)
+        protected virtual Task OnJoinedGuild(SocketGuild socketGuild)
         {
             Logger.WriteLine_Debug("OnJoinedGuild: " + socketGuild.ToString());
+            return Task.CompletedTask;
         }
 
-        public DiscordSocketClient GetSocketClient()
+        protected virtual Task InviteCreated(SocketInvite socketInvite)
         {
-            return m_DiscordSocketClient;
+            Logger.WriteLine_Debug("InviteCreated: " + socketInvite.ToString());
+            return Task.CompletedTask;
         }
 
-        public bool GuildUserIsSelf(IGuildUser? guildUser)
+        public virtual Task InviteDeleted(SocketGuildChannel socketGuildChannel, string name)
         {
-            return m_DiscordSocketClient.CurrentUser.Id == guildUser?.Id;
+            Logger.WriteLine_Debug("InviteDeleted: " + socketGuildChannel.ToString());
+            return Task.CompletedTask;
         }
+
+        #endregion
     }
 }

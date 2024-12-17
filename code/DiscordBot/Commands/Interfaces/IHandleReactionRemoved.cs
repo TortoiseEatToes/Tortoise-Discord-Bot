@@ -7,10 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Tortoise;
 
-namespace TortoiseDiscordBot.code.DiscordBot.Commands.Interfaces
+namespace Tortoise
 {
     internal interface IHandleReactionRemoved
     {
-        bool HandleReactionRemoved(TortoiseBot tortoiseBot, Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3);
+        public bool HandleReactionRemoved(TortoiseBot tortoiseBot, Cacheable<IUserMessage, ulong> userMessage, Cacheable<IMessageChannel, ulong> messageChannel, SocketReaction socketReaction);
     }
 }

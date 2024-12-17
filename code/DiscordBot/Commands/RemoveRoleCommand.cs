@@ -1,14 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tortoise;
-using TortoiseDiscordBot.code.DiscordBot.Commands.Interfaces;
 
-namespace TortoiseDiscordBot.code.DiscordBot.Commands
+namespace Tortoise
 {
     internal class RemoveRoleCommand : TortoiseBotCommand, IHandleReactionRemoved
     {
@@ -22,13 +15,13 @@ namespace TortoiseDiscordBot.code.DiscordBot.Commands
             return "Remove Role";
         }
 
-        public bool HandleReactionRemoved(TortoiseBot tortoiseBot, Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
+        public bool HandleReactionRemoved(TortoiseBot tortoiseBot, Cacheable<IUserMessage, ulong> userMessage, Cacheable<IMessageChannel, ulong> messageChannel, SocketReaction socketReaction)
         {
             bool bHandled = false;
-            if (arg1.Id == tortoiseBot.GetSettings().reactMessage)
+            if (userMessage.Id == tortoiseBot.GetSettings().reactMessage)
             {
-                Logger.WriteLine_Debug(arg3.User.Value.Username + " wants to remove: " + arg3.Emote.Name);
-                IGuildUser? guildUser = arg3.User.Value as IGuildUser;
+                Logger.WriteLine_Debug(socketReaction.User.Value.Username + " wants to remove: " + socketReaction.Emote.Name);
+                IGuildUser? guildUser = socketReaction.User.Value as IGuildUser;
                 if (guildUser is null)
                 {
                     return false;
@@ -39,15 +32,15 @@ namespace TortoiseDiscordBot.code.DiscordBot.Commands
                 }
                 if (guildUser.IsBot)
                 {
-                    Logger.WriteLine_Debug("Ignoring reaction removed from " + arg3.User.Value.Username + " because they are a bot.");
+                    Logger.WriteLine_Debug("Ignoring reaction removed from " + socketReaction.User.Value.Username + " because they are a bot.");
                     return false;
                 }
                 ulong roleID;
-                if (tortoiseBot.GetSettings().reactRoles.TryGetValue(arg3.Emote.Name, out roleID))
+                if (tortoiseBot.GetSettings().reactRoles.TryGetValue(socketReaction.Emote.Name, out roleID))
                 {
                     if (DiscordBotUtilities.UserHasRole(guildUser, roleID))
                     {
-                        Logger.WriteLine_Debug($"Removing role '{arg3.Emote.Name}' from user '{arg3.User.Value.Username}'");
+                        Logger.WriteLine_Debug($"Removing role '{socketReaction.Emote.Name}' from user '{socketReaction.User.Value.Username}'");
                         guildUser.RemoveRoleAsync(roleID).Wait();
                         bHandled = true;
                     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TortoiseDiscordBot.code.DiscordBot.Commands.Interfaces
+namespace Tortoise
 {
     internal interface IHandleSlashCommand
     {

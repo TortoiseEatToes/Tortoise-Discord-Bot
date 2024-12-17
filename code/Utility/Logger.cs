@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TortoiseDiscordBot.code.CommandLineOptions;
 
 namespace Tortoise
 {
@@ -18,13 +19,17 @@ namespace Tortoise
         private Mutex mutex = new Mutex();
         private OnLogLineAddedCallbackDelegate? _onLogLineAdded;
 
-        private Logger()
+        private Logger(CommandLineOptions commandLineOptions)
         {
-            CreateLogFile();
+            CreateLogFile(commandLineOptions);
         }
 
-        private void CreateLogFile()
+        private void CreateLogFile(CommandLineOptions commandLineOptions)
         {
+            if(commandLineOptions.WorkingDirectory is not null)
+            {
+                logsDirectory = $"{commandLineOptions.WorkingDirectory}\\{logsDirectory}";
+            }
             if(!Directory.Exists(logsDirectory))
             {
                 Directory.CreateDirectory(logsDirectory);
@@ -73,7 +78,8 @@ namespace Tortoise
 
         public static void Initialize()
         {
-            logger = new Logger();
+            CommandLineOptions commandLineOptions = CommandLineOptionsManager.GetOptions();
+            logger = new Logger(commandLineOptions);
         }
 
         public static void WriteLine_Critical(string logLine)

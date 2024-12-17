@@ -7,10 +7,10 @@ namespace Tortoise
 {
     class SideProcess
     {
-        private Process process;
-        private ProcessStartInfo startInfo;
+        private Process? process;
+        private ProcessStartInfo? startInfo;
         private string name;
-        private Action<SideProcess> callback;
+        private Action<SideProcess>? callback;
 
         public SideProcess(string processName)
         {
@@ -34,7 +34,7 @@ namespace Tortoise
 
         public int GetResult()
         {
-            return process.ExitCode;
+            return process is not null ? process.ExitCode : 0;
         }
 
         private void CreateStartInfo(string commandLine)
@@ -62,7 +62,10 @@ namespace Tortoise
 
         private void process_Exited(object sender, System.EventArgs e)
         {
-            callback(this);
+            if(callback is not null)
+            {
+                callback(this);
+            }
         }
 
         private void process_OutputDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
