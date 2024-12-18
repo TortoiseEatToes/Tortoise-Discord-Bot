@@ -11,6 +11,6 @@ namespace Tortoise
 {
     internal interface IHandleReactionAdded
     {
-        bool Handle(TortoiseBot tortoiseBot, Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3);
+        bool Handle(TortoiseBot tortoiseBot, Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction socketReaction);
     }
 }

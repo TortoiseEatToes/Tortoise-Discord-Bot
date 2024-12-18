@@ -5,16 +5,16 @@ namespace Tortoise
 {
     internal class RemoveRoleCommand : TortoiseBotCommand, IHandleReactionRemoved
     {
-        public override string GetDescription()
-        {
-            return "If a user removes a react from the Roles message with a set reaction, remove the corresponding role.";
-        }
-
         public override string GetDisplayName()
         {
             return "Remove Role";
         }
-
+        
+        public override string GetDescription()
+        {
+            return "If a user removes a react from the Roles message with a set reaction, remove the corresponding role.";
+        }
+        
         public bool HandleReactionRemoved(TortoiseBot tortoiseBot, Cacheable<IUserMessage, ulong> userMessage, Cacheable<IMessageChannel, ulong> messageChannel, SocketReaction socketReaction)
         {
             if (userMessage.Id != tortoiseBot.GetSettings().reactMessage)

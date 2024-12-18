@@ -10,6 +10,6 @@ namespace Tortoise
 {
     internal interface IHandleTextCommand
     {
-        public Task<bool> HandleTextCommand(TortoiseBot tortoiseBot, SocketCommandContext commandContext, string[] splitContent);
+        public bool HandleTextCommand(TortoiseBot tortoiseBot, SocketCommandContext commandContext, string[] splitContent);
     }
 }
