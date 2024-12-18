@@ -8,8 +8,8 @@ namespace Tortoise
 {
     internal abstract class TortoiseBotCommand
     {
-        public abstract string GetDescription();
-
         public abstract string GetDisplayName();
+        public abstract string GetDescription();
+        
     }
 }

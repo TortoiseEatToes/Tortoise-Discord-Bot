@@ -17,36 +17,60 @@ namespace Tortoise
 
         public bool HandleReactionRemoved(TortoiseBot tortoiseBot, Cacheable<IUserMessage, ulong> userMessage, Cacheable<IMessageChannel, ulong> messageChannel, SocketReaction socketReaction)
         {
-            bool bHandled = false;
-            if (userMessage.Id == tortoiseBot.GetSettings().reactMessage)
+            if (userMessage.Id != tortoiseBot.GetSettings().reactMessage)
             {
-                Logger.WriteLine_Debug(socketReaction.User.Value.Username + " wants to remove: " + socketReaction.Emote.Name);
-                IGuildUser? guildUser = socketReaction.User.Value as IGuildUser;
-                if (guildUser is null)
-                {
-                    return false;
-                }
-                if (tortoiseBot.GuildUserIsSelf(guildUser))
-                {
-                    return false;
-                }
-                if (guildUser.IsBot)
-                {
-                    Logger.WriteLine_Debug("Ignoring reaction removed from " + socketReaction.User.Value.Username + " because they are a bot.");
-                    return false;
-                }
-                ulong roleID;
-                if (tortoiseBot.GetSettings().reactRoles.TryGetValue(socketReaction.Emote.Name, out roleID))
-                {
-                    if (DiscordBotUtilities.UserHasRole(guildUser, roleID))
-                    {
-                        Logger.WriteLine_Debug($"Removing role '{socketReaction.Emote.Name}' from user '{socketReaction.User.Value.Username}'");
-                        guildUser.RemoveRoleAsync(roleID).Wait();
-                        bHandled = true;
-                    }
-                }
+                return false;
             }
-            return bHandled;
+
+            string result;
+            if (TryRemoveRole(tortoiseBot, socketReaction.User.Value, socketReaction.Emote, out result))
+            {
+                Logger.WriteLine_Debug(result);
+            }
+            else
+            {
+                Logger.WriteLine_Error($"Failed to remove role because {result}");
+            }
+            return true;
+        }
+
+        private bool TryRemoveRole(TortoiseBot tortoiseBot, IUser user, IEmote emote, out string reason)
+        {
+            IGuildUser? guildUser = user as IGuildUser;
+            if (guildUser is null)
+            {
+                reason = "User is not a guild user";
+                return false;
+            }
+            
+            if (tortoiseBot.GuildUserIsSelf(guildUser))
+            {
+                reason = "User is self";
+                return false;
+            }
+            
+            if (guildUser.IsBot)
+            {
+                reason = "User is bot";
+                return false;
+            }
+            
+            ulong roleId;
+            if (!tortoiseBot.GetSettings().reactRoles.TryGetValue(emote.Name, out roleId))
+            {
+                reason = "This emote is not a react role";
+                return false;
+            }
+
+            if (!DiscordBotUtilities.UserHasRole(guildUser, roleId))
+            {
+                reason = "This user doesn't have a react role";
+                return false;
+            }
+            
+            guildUser.RemoveRoleAsync(roleId).Wait();
+            reason = $"Removed role '{emote.Name}' from user '{user.Username}'";
+            return true;
         }
     }
 }
