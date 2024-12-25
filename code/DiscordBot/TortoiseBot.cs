@@ -110,14 +110,9 @@ namespace Tortoise
             handlerList.Add(handler);
         }
 
-        public List<string> GetBehaviorPossible()
+        public List<TortoiseBotCommand> GetCommands()
         {
-            List<string> behaviors = new List<string>();
-            foreach (TortoiseBotCommand command in commands)
-            {
-                behaviors.Add($"    -{command.GetDisplayName()}: {command.GetDescription()}");
-            }
-            return behaviors;
+            return commands;
         }
         #endregion
 

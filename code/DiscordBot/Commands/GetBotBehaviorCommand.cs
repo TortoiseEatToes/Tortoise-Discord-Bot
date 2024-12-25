@@ -31,10 +31,11 @@ namespace Tortoise
         {
             string outputMessage = "";
 
-            List<string> behaviors = tortoiseBot.GetBehaviorPossible();
-            foreach (string behavior in behaviors)
+            List<TortoiseBotCommand> commands = tortoiseBot.GetCommands();
+            foreach (TortoiseBotCommand command in commands)
             {
-                outputMessage += behavior + "\n";
+                outputMessage += command.GetDisplayName();
+                outputMessage += $"\n   -{command.GetDescription()}\n";
             }
 
             socketMessageChannel.SendMessageAsync(outputMessage);
