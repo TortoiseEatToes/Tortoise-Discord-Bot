@@ -14,9 +14,6 @@ namespace Tortoise
             tortoiseBotSettings = new TortoiseBotSettings();
         }
         public List<string> commands = new List<string>();
-        public List<string> onMessageReceivedHandlers = new List<string>();
-        public List<string> onReactionAddedHandlers = new List<string>();
-        public List<string> onReactionRemovedHandlers = new List<string>();
         public TortoiseBotSettings tortoiseBotSettings { get; set; }
     }
 

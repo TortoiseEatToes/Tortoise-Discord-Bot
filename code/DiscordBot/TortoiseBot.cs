@@ -1,22 +1,22 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.Rest;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace Tortoise
 {
     public class TortoiseBot : DiscordBot
     {
-        private List<OnMessageReceivedHandler> onMessageReceivedHandlers = new List<OnMessageReceivedHandler>();
-        private List<OnReactionAddedHandler> onReactionAddedHandlers = new List<OnReactionAddedHandler>();
-        private List<OnReactionRemovedHandler> onReactionRemovedHandlers = new List<OnReactionRemovedHandler>();
+        private List<TortoiseBotCommand> commands = new List<TortoiseBotCommand>();
+        private List<IHandleSlashCommand> slashCommandHandlers = new List<IHandleSlashCommand>();
+        private List<IHandleTextCommand> textCommandHandlers = new List<IHandleTextCommand>();
+        private List<IHandleReactionAdded> reactionAddedHandlers = new List<IHandleReactionAdded>();
+        private List<IHandleReactionRemoved> reactionRemovedHandlers = new List<IHandleReactionRemoved>();
+
         private List<SideProcess> sideProcesses = new List<SideProcess>();
         private Mutex mutexSideProcess = new Mutex();
 
@@ -45,17 +45,35 @@ namespace Tortoise
         public void ReadFromSettings(BotRuntimeSettings botSettings)
         {
             settings = botSettings.json.tortoiseBotSettings;
-            PopulateListWithObjects<OnMessageReceivedHandler>(onMessageReceivedHandlers, botSettings.json.onMessageReceivedHandlers);
-            PopulateListWithObjects<OnReactionAddedHandler>(onReactionAddedHandlers, botSettings.json.onReactionAddedHandlers);
-            PopulateListWithObjects<OnReactionRemovedHandler>(onReactionRemovedHandlers, botSettings.json.onReactionRemovedHandlers);
+            foreach(string commandName in botSettings.json.commands)
+            {
+                Type? type = Type.GetType(commandName);
+                if (type is null)
+                {
+                    continue;
+                }
+                object? objectInstance = Activator.CreateInstance(type);
+                if (objectInstance is null)
+                {
+                    continue;
+                }
+                TortoiseBotCommand? command = objectInstance as TortoiseBotCommand;
+                if (command is null)
+                {
+                    continue;
+                }
+                commands.Add(command);
+                TryAddHandler<IHandleSlashCommand>(slashCommandHandlers, command);
+                TryAddHandler<IHandleTextCommand>(textCommandHandlers, command);
+                TryAddHandler<IHandleReactionAdded>(reactionAddedHandlers, command);
+                TryAddHandler<IHandleReactionRemoved>(reactionRemovedHandlers, command);
+            }
         }
 
         public void WriteToSettings(BotRuntimeSettings botSettings)
         {
             botSettings.json.tortoiseBotSettings = settings;
-            PopulateListWithObjectNames<OnMessageReceivedHandler>(botSettings.json.onMessageReceivedHandlers, onMessageReceivedHandlers);
-            PopulateListWithObjectNames<OnReactionAddedHandler>(botSettings.json.onReactionAddedHandlers, onReactionAddedHandlers);
-            PopulateListWithObjectNames<OnReactionRemovedHandler>(botSettings.json.onReactionRemovedHandlers, onReactionRemovedHandlers);
+            PopulateListWithObjectNames<TortoiseBotCommand>(botSettings.json.commands, commands);
         }
 
         public void SaveSettingsToDefaultFile()
@@ -82,67 +100,22 @@ namespace Tortoise
             }
         }
 
-        private static void PopulateListWithObjects<TypeName>(List<TypeName> listOfObjects, List<string> listOfObjectNames) where TypeName : class
+        private void TryAddHandler<TypeName>(List<TypeName> handlerList, object hanlderObject) where TypeName : class
         {
-            listOfObjects.Clear();
-            foreach (string objectName in listOfObjectNames)
+            TypeName? handler = hanlderObject as TypeName;
+            if (handler is null)
             {
-                TypeName? typeNameInstance = GetObjectOfType<TypeName>(objectName);
-                if (typeNameInstance != null)
-                {
-                    listOfObjects.Add(typeNameInstance);
-                }
+                return;
             }
-        }
-
-        private static TypeName? GetObjectOfType<TypeName>(string qualifiedName) where TypeName : class
-        {
-            TypeName? createdType = default(TypeName);
-            Type? type = Type.GetType(qualifiedName);
-            if (type != null)
-            {
-                object? typeInstance = Activator.CreateInstance(type);
-                if(typeInstance is not null)
-                {
-                    TypeName? typeName = typeInstance as TypeName;
-                    if (typeName is not null)
-                    {
-                        createdType = typeName;
-                    }
-                    else
-                    {
-                        Logger.WriteLine_Error($"Failed to cast {qualifiedName} to {typeof(TypeName).FullName}");
-                    }
-                }
-                else
-                {
-                    Logger.WriteLine_Error($"Failed to create instance of type {type}");
-                }
-            }
-            else
-            {
-                Logger.WriteLine_Error($"Failed to find type for {qualifiedName}");
-            }
-            return createdType;
+            handlerList.Add(handler);
         }
 
         public List<string> GetBehaviorPossible()
         {
             List<string> behaviors = new List<string>();
-            behaviors.Add("=== onMessageReceivedHandlers ===");
-            foreach (OnMessageReceivedHandler onMessageReceivedHandler in onMessageReceivedHandlers)
+            foreach (TortoiseBotCommand command in commands)
             {
-                behaviors.Add($"    -{onMessageReceivedHandler.GetType().ToString()}: {onMessageReceivedHandler.GetDescription()}");
-            }
-            behaviors.Add("=== onReactionAddedHandlers ===");
-            foreach (OnReactionAddedHandler onReactionAddedHandler in onReactionAddedHandlers)
-            {
-                behaviors.Add($"    -{onReactionAddedHandler.GetType().ToString()}: {onReactionAddedHandler.GetDescription()}");
-            }
-            behaviors.Add("=== onReactionRemovedHandlers ===");
-            foreach (OnReactionRemovedHandler onReactionRemovedHandler in onReactionRemovedHandlers)
-            {
-                behaviors.Add($"    -{onReactionRemovedHandler.GetType().ToString()}: {onReactionRemovedHandler.GetDescription()}");
+                behaviors.Add($"    -{command.GetDisplayName()}: {command.GetDescription()}");
             }
             return behaviors;
         }
@@ -168,9 +141,9 @@ namespace Tortoise
             if (userMessage.Content.StartsWith(settings.messageRecievedCharacter))
             {
                 string[] splitContent = userMessage.Content.Substring(1).Split(" ");
-                foreach (OnMessageReceivedHandler onMessageReceivedHandler in onMessageReceivedHandlers)
+                foreach (IHandleTextCommand textCommandHandler in textCommandHandlers)
                 {
-                    if (await onMessageReceivedHandler.Handle(this, commandContext, splitContent))
+                    if (textCommandHandler.HandleTextCommand(this, commandContext, splitContent))
                     {
                         break;
                     }
@@ -181,7 +154,7 @@ namespace Tortoise
         protected override async Task OnReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
             Logger.WriteLine_Debug("OnReactionAdded");
-            foreach (OnReactionAddedHandler onReactionAddedHandler in onReactionAddedHandlers)
+            foreach (OnReactionAddedHandler onReactionAddedHandler in reactionAddedHandlers)
             {
                 if (await onReactionAddedHandler.Handle(this, arg1, arg2, arg3))
                 {
@@ -193,7 +166,7 @@ namespace Tortoise
         protected override async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
             Logger.WriteLine_Debug("OnReactionRemoved");
-            foreach (OnReactionRemovedHandler onReactionRemovedHandler in onReactionRemovedHandlers)
+            foreach (OnReactionRemovedHandler onReactionRemovedHandler in reactionRemovedHandlers)
             {
                 if (await onReactionRemovedHandler.Handle(this, arg1, arg2, arg3))
                 {
