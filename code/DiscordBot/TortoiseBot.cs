@@ -149,9 +149,9 @@ namespace Tortoise
         protected override async Task OnReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
             Logger.WriteLine_Debug("OnReactionAdded");
-            foreach (OnReactionAddedHandler onReactionAddedHandler in reactionAddedHandlers)
+            foreach (IHandleReactionAdded onReactionAddedHandler in reactionAddedHandlers)
             {
-                if (await onReactionAddedHandler.Handle(this, arg1, arg2, arg3))
+                if (onReactionAddedHandler.Handle(this, arg1, arg2, arg3))
                 {
                     break;
                 }
@@ -161,9 +161,9 @@ namespace Tortoise
         protected override async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
             Logger.WriteLine_Debug("OnReactionRemoved");
-            foreach (OnReactionRemovedHandler onReactionRemovedHandler in reactionRemovedHandlers)
+            foreach (IHandleReactionRemoved onReactionRemovedHandler in reactionRemovedHandlers)
             {
-                if (await onReactionRemovedHandler.Handle(this, arg1, arg2, arg3))
+                if (onReactionRemovedHandler.HandleReactionRemoved(this, arg1, arg2, arg3))
                 {
                     break;
                 }
@@ -173,14 +173,13 @@ namespace Tortoise
         public async void PostMessageToDefaultChannel(String outputMessage)
         {
             IMessageChannel? botLogsChannel = GetSocketClient().GetChannel(settings.defaultOutputChannel) as IMessageChannel;
-            if(botLogsChannel is not null)
-            {
-                await botLogsChannel.SendMessageAsync(outputMessage);
-            }
-            else
+            if(botLogsChannel is null)
             {
                 Logger.WriteLine_Error($"PostMessageToDefaultChannel - Failed to find botLogsChannel at {settings.defaultOutputChannel} to post message to: {outputMessage}");
+                return;
             }
+
+            await botLogsChannel.SendMessageAsync(outputMessage);
         }
         #endregion
 
@@ -188,20 +187,31 @@ namespace Tortoise
         protected override async Task OnClientIsReady()
         {
             Logger.WriteLine_Debug("OnClientIsReady - Start");
-            SocketGuild socketGuild = m_DiscordSocketClient.GetGuild(settings.server_id_tortoise_jams);
-            if (socketGuild != null)
-            {
-                SocketTextChannel socketTextChannel = socketGuild.GetTextChannel(settings.reactChannel);
-                if (socketTextChannel != null)
-                {
-                    IMessage messageRoles = await socketTextChannel.GetMessageAsync(settings.reactMessage);
-                    if (messageRoles != null)
-                    {
-                        await InitializeRoles(messageRoles, socketGuild);
-                    }
-                }
-            }
+
+            await InitializeRoles();
+
             Logger.WriteLine_Debug("OnClientIsReady - End");
+        }
+
+        private async Task InitializeRoles()
+        {
+            SocketGuild socketGuild = m_DiscordSocketClient.GetGuild(settings.server_id_tortoise_jams);
+            if (socketGuild is null)
+            {
+                return;
+            }
+            SocketTextChannel socketTextChannel = socketGuild.GetTextChannel(settings.reactChannel);
+            if (socketTextChannel is null)
+            {
+                return;
+            }
+            IMessage messageRoles = await socketTextChannel.GetMessageAsync(settings.reactMessage);
+            if (messageRoles is null)
+            {
+                return;
+            }
+
+            await InitializeRoles(messageRoles, socketGuild);
         }
 
         private async Task InitializeRoles(IMessage messageRoles, SocketGuild socketGuild)
